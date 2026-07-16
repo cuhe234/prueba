@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oficinas - Recorrido Virtual CUHE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="top">
+    <header>
+        <div class="header-inner">
+            <img src="panormas/cuhe%20logo.png" alt="CUHE logo" class="header-logo">
+            <div class="header-right">
+                <h1>Oficinas</h1>
+                <button id="section-exit-button" class="button nav-button" type="button" onclick="window.location.href='index.html#selection'">Salir</button>
+                
+            </div>
+        </div>
+    </header>
+
+    <div class="intro">
+        <p>Recorrido virtual de Oficinas</p>
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="tour.html" class="button">Recorrido Oficinas</a>
+        </div>
+    </div>
+
+    <main class="section-content">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="#videos" class="button" style="margin-right: 12px;">↓ Ir a Vídeos</a>
+            <a href="#images" class="button">↓ Ir a Imágenes</a>
+        </div>
+
+        <h2 id="videos" style="margin: 30px 0 20px 0; color: #3D6DB9;">Vídeos</h2>
+        <div class="videos-grid">
+            <div class="video-card" data-type="video" data-index="0" data-title="Vídeo: Oficinas 1" tabindex="0">
+                <video class="video-thumb" src="panormas/video_oficina1.mp4" preload="metadata" muted playsinline></video>
+            </div>
+            <div class="video-card" data-type="video" data-index="1" data-title="Vídeo: Oficinas 2" tabindex="0">
+                <video class="video-thumb" src="panormas/video_oficina2.mp4" preload="metadata" muted playsinline></video>
+            </div>
+        </div>
+        <div style="text-align: center; margin: 18px 0 30px;">
+            <a href="#top" class="button">Regresar</a>
+        </div>
+
+        <h2 id="images" style="margin: 40px 0 20px 0; color: #3D6DB9;">Imágenes</h2>
+        <div class="image-carousel">
+            <button class="carousel-button carousel-btn-prev" aria-label="Imagen anterior">❮</button>
+            <div class="carousel-wrapper">
+                <div class="carousel-container">
+                    <div class="carousel-item" data-title="Imagen 1">
+                        <img src="panormas/oficina1.jpeg" alt="Imagen 1" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 2">
+                        <img src="panormas/oficina2.jpeg" alt="Imagen 2" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 3">
+                        <img src="panormas/oficina3.jpeg" alt="Imagen 3" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 4">
+                        <img src="panormas/oficina4.jpeg" alt="Imagen 4" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 5">
+                        <img src="panormas/oficina5.jpeg" alt="Imagen 5" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 6">
+                        <img src="panormas/oficina6.jpeg" alt="Imagen 6" />
+                    </div>
+                    <div class="carousel-item" data-title="Imagen 7">
+                        <img src="panormas/oficina7.jpeg" alt="Imagen 7" />
+                    </div>
+                </div>
+                <div class="carousel-counter">1 / 7</div>
+                <div class="carousel-title"></div>
+            </div>
+            <button class="carousel-button carousel-btn-next" aria-label="Imagen siguiente">❯</button>
+        </div>
+        <div style="text-align: center; margin: 18px 0 30px;">
+            <a href="#top" class="button">Regresar</a>
+        </div>
+    </main>
+
+    <!-- Galería Modal -->
+    <div class="gallery-modal" id="galleryModal">
+        <div class="gallery-content">
+            <button class="gallery-nav prev" id="prevBtn">❮</button>
+            <img id="galleryImage" class="gallery-image" style="display: none;">
+            <video id="galleryVideo" class="gallery-video" controls style="display: none;"></video>
+            <button class="gallery-nav next" id="nextBtn">❯</button>
+            <button class="gallery-close" id="closeGallery">✕</button>
+            <div class="gallery-counter" id="galleryCounter"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentType = null;
+        let currentIndex = 0;
+        let items = [];
+
+        const imageFiles = [
+            'panormas/oficina1.jpeg',
+            'panormas/oficina2.jpeg',
+            'panormas/oficina3.jpeg',
+            'panormas/oficina4.jpeg',
+            'panormas/oficina5.jpeg',
+            'panormas/oficina6.jpeg',
+            'panormas/oficina7.jpeg'
+        ];
+
+        const videoFiles = [
+            'panormas/video_oficina1.mp4',
+            'panormas/video_oficina2.mp4'
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const exitButton = document.getElementById('section-exit-button');
+            if (exitButton) {
+                exitButton.addEventListener('click', () => {
+                    window.location.href = 'index.html#selection';
+                });
+            }
+
+            setupGallery();
+        });
+
+        function setupGallery() {
+            const imageCards = document.querySelectorAll('.image-card[data-type="image"]');
+            const videoCards = document.querySelectorAll('.video-card[data-type="video"]');
+
+            imageCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    currentType = 'image';
+                    items = Array.from(imageCards);
+                    currentIndex = parseInt(card.dataset.index);
+                    openGallery();
+                });
+            });
+
+            // hover / focus effects for image cards: set data-title if missing
+            imageCards.forEach((card, i) => {
+                if (!card.dataset.title) card.dataset.title = `Imagen ${i + 1}`;
+            });
+
+            videoCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    currentType = 'video';
+                    items = Array.from(videoCards);
+                    currentIndex = parseInt(card.dataset.index);
+                    openGallery();
+                });
+            });
+
+            // hover play for video thumbnails
+            const thumbs = document.querySelectorAll('.video-thumb');
+            thumbs.forEach((v, idx) => {
+                v.addEventListener('mouseenter', () => {
+                    try { v.loop = true; v.muted = true; v.play().catch(()=>{}); } catch(e){}
+                });
+                v.addEventListener('mouseleave', () => {
+                    try { v.pause(); v.currentTime = 0; } catch(e){}
+                });
+                // accessibility: play on parent focus, pause on blur
+                const parent = v.closest('.video-card');
+                if (parent) {
+                    parent.addEventListener('focus', () => { try { v.loop = true; v.muted = true; v.play().catch(()=>{}); } catch(e){} });
+                    parent.addEventListener('blur', () => { try { v.pause(); v.currentTime = 0; } catch(e){} });
+                }
+            });
+
+            document.getElementById('prevBtn').addEventListener('click', showPrevious);
+            document.getElementById('nextBtn').addEventListener('click', showNext);
+            document.getElementById('closeGallery').addEventListener('click', closeGallery);
+            document.getElementById('galleryModal').addEventListener('click', (e) => {
+                if (e.target.id === 'galleryModal') closeGallery();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (document.getElementById('galleryModal').classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') showPrevious();
+                    if (e.key === 'ArrowRight') showNext();
+                    if (e.key === 'Escape') closeGallery();
+                }
+            });
+        }
+
+        function openGallery() {
+            document.getElementById('galleryModal').classList.add('active');
+            showCurrentItem();
+        }
+
+        function closeGallery() {
+            document.getElementById('galleryModal').classList.remove('active');
+            document.getElementById('galleryImage').style.display = 'none';
+            document.getElementById('galleryVideo').style.display = 'none';
+        }
+
+        function showCurrentItem() {
+            const item = items[currentIndex];
+            const index = parseInt(item.dataset.index);
+            
+            document.getElementById('galleryImage').style.display = 'none';
+            document.getElementById('galleryVideo').style.display = 'none';
+
+            if (currentType === 'image') {
+                const img = document.getElementById('galleryImage');
+                img.src = imageFiles[index] || '';
+                img.style.display = 'block';
+            } else {
+                const video = document.getElementById('galleryVideo');
+                // stop and reset any previous video
+                video.pause();
+                video.src = videoFiles[index] || '';
+                video.style.display = 'block';
+                video.load();
+            }
+
+            updateCounter();
+        }
+
+        function showPrevious() {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            showCurrentItem();
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex + 1) % items.length;
+            showCurrentItem();
+        }
+
+        function updateCounter() {
+            const counter = document.getElementById('galleryCounter');
+            counter.textContent = `${currentIndex + 1} / ${items.length}`;
+        }
+    </script>
+
+</body>
+</html>
