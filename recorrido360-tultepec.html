@@ -1,0 +1,236 @@
+   <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Recorrido Virtual PB / ES</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+  <style>
+    html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; background: #000; color: #fff; }
+    #panorama { width: 100%; height: 100%; }
+    .pnlm-sceneList > div { color: #fff; }
+    .tour-title { position: absolute; left: 16px; top: 16px; z-index: 10; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 6px; }
+    .scene-toggle { position: absolute; right: 16px; top: 16px; z-index: 12; background: linear-gradient(180deg, #3d6db9 0%, #01dfff 100%); color: #fafbf6; border: 1px solid #00fff1; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .scene-picker { position: absolute; right: 16px; top: 56px; z-index: 12; background: linear-gradient(180deg, #3d6db9 0%, #01dfff 50%, #00fff1 100%); padding: 16px; border-radius: 18px; display: none; width: 260px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.18); }
+    .scene-picker label { display: block; margin-bottom: 10px; font-size: 0.95rem; color: #fafbf6; letter-spacing: 0.02em; }
+    .scene-picker select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.35); background: rgba(250,251,246,0.12); color: #fff; backdrop-filter: blur(8px); }
+    .scene-picker option { background: rgba(13,30,55,0.95); color: #fafbf6; }
+    .scene-picker button { margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; border: none; background: #fafbf6; color: #0b1830; font-weight: 700; cursor: pointer; }
+    .scene-picker.show { display: block; }
+    .exit-button { position: absolute; right: 16px; top: 100px; z-index: 12; background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%); color: #fff; border: 1px solid #ff6b6b; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .pnlm-hotspot {
+      background: linear-gradient(135deg, #3d6db9 0%, #01dfff 50%, #00fff1 100%) !important;
+      border: 2px solid #ffffff !important;
+      border-radius: 50% !important;
+      box-shadow: 0 0 8px rgba(0,0,0,0.25) !important;
+    }
+    .pnlm-hotspot:hover {
+      background: linear-gradient(135deg, #01dfff 0%, #3d6db9 50%, #00fff1 100%) !important;
+      border-color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="tour-title">Recorrido PB a ES</div>
+  <button id="scene-toggle" class="scene-toggle">Escenas</button>
+  <button class="exit-button" type="button" onclick="window.location.href='plantel-tultepec.html'">Salir</button>
+  <div id="scene-picker" class="scene-picker" aria-hidden="true">
+    <label for="scene-select">Ir a escena</label>
+    <select id="scene-select"></select>
+    <button id="scene-close" type="button">Cerrar selector</button>
+  </div>
+  <div id="panorama"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <script>
+    const scenes = {
+      "pb_1": { title: "Entrada1", panorama: "img360/pb_1.jpeg" },
+      "pb_2": { title: "Entrada2", panorama: "img360/pb_2.jpg" },
+      "pb_3": { title: "Entrada3", panorama: "img360/pb_3.jpeg" },
+      "pb_4": { title: "Direccion", panorama: "img360/pb_4.jpg" },
+      "pb_5": { title: "Pasillo", panorama: "img360/pb_5.jpg" },
+      "pb_6": { title: "Escaleras", panorama: "img360/pb-6.jpg" },
+      "es_1": { title: "Estacionamiento", panorama: "img360/es_1.jpg" },
+      "es_2": { title: "Estacionamiento1", panorama: "img360/es_2.jpg" },
+      "es_3": { title: "Estacionamiento2", panorama: "img360/es_3.jpg" },
+      "au_1": { title: "aula1", panorama: "img360/au_1.jpg" },
+      "au_2": { title: "Aula2", panorama: "img360/au_2.jpg" },
+      "au_3": { title: "Aula3", panorama: "img360/au_3.jpg" },
+      "au_4": { title: "Aula4", panorama: "img360/au_4.jpg" },
+      "au_5": { title: "Aula5", panorama: "img360/au_5.jpeg" },
+      "au_6": { title: "Aula6", panorama: "img360/au_6.jpg" },
+      "au_7": { title: "Aula7", panorama: "img360/au_7.jpeg" },
+      "au_8": { title: "Aula8", panorama: "img360/au_8.jpeg" },
+      "au_9": { title: "Aula9", panorama: "img360/au_9.jpg" },
+      "au_10": { title: "Aula10", panorama: "img360/au_10.jpg" },
+      "au_11": { title: "Aula11", panorama: "img360/au_11.jpg" },
+      "au_12": { title: "Aula12", panorama: "img360/au_12.jpg" },
+      "au_13": { title: "Aula13", panorama: "img360/au_13.jpg" },
+      "dir_1": { title: "Direccion", panorama: "img360/dir_1.jpg" },
+      "esc_1": { title: "Escalera1", panorama: "img360/esc_1.jpg" },
+      "esc_2": { title: "Ecalera2", panorama: "img360/esc_2.jpg" },
+      "esc_3": { title: "Ecalera3", panorama: "img360/esc_3.jpg" },
+      "esc_4": { title: "escalera4", panorama: "img360/esc_4.jpg" },
+      "esc_5": { title: "Escalera5", panorama: "img360/esc_5.jpg" },
+      "p1_1": { title: "Pasillo1_direc", panorama: "img360/p1_1.jpg" },
+      "p1_2": { title: "Pasillo2_direc", panorama: "img360/p1_2.jpg" },
+      "p1_3": { title: "Pasillo3_direc", panorama: "img360/p1_3.jpg" },
+      "p1_4": { title: "Pasillo4_direc", panorama: "img360/p1_4.jpg" },
+      "p1_5": { title: "Pasillo5_direc", panorama: "img360/p1_5.jpg" },
+      "p1_6": { title: "Pasillo_medio", panorama: "img360/p1_6.jpg" },
+      "p1_7": { title: "Pasillo_medio2", panorama: "img360/p1_7.jpg" },
+      "p1_8": { title: "Pasillo_medio3", panorama: "img360/p1_8.jpg" },
+      "p1_9": { title: "Pasillo_medio4", panorama: "img360/p1_9.jpg" },
+      "p1_10": { title: "Pasillo_medio5", panorama: "img360/p1_10.jpg" },
+      "p1_11": { title: "P1 11", panorama: "img360/p1_11.jpg" },
+      "p1_12": { title: "P1 12", panorama: "img360/p1_12.jpg" },
+      "p1_13": { title: "P1 13", panorama: "img360/p1_13.jpeg" },
+      "p1_14": { title: "P1 14", panorama: "img360/p1_14.jpg" },
+      "p1_15": { title: "P1 15", panorama: "img360/p1_15.jpg" },
+      "cf_1": { title: "CF 1", panorama: "img360/cf_1.jpg" },
+      "cf_4": { title: "CF 4", panorama: "img360/cf_4.jpg" },
+      "cf_3": { title: "CF 3", panorama: "img360/cf_3.jpg" },
+      "cf_2": { title: "CF 2", panorama: "img360/cf_2.jpg" },
+            
+    };
+
+    const connections = { 
+      pb_1: { next: "pb_2" },
+      pb_2: { prev: "pb_1", next: "pb_3" },
+      pb_3: { prev: "pb_2", left: "pb_4", right: "es_1" },
+      pb_4: { prev: "pb_3", next: "pb_5", left: "dir_1" },
+      pb_5: { prev: "pb_4", next: "pb_6", right: "cf_4" },
+      pb_6: { prev: "pb_5", next: "esc_1" },
+      es_1: { prev: "pb_3", next: "es_2", right: "au_13" },
+      es_2: { prev: "es_1", next: "es_3", right: "au_12" },
+      es_3: { prev: "es_2", next: "p1_1" },
+      au_1: { prev: "p1_5" },
+      au_2: { prev: "p1_4" },
+      au_3: { prev: "p1_3" },
+      au_4: { prev: "p1_2" },
+      au_5: { prev: "p1_6" },
+      au_6: { prev: "p1_9" },
+      au_7: { prev: "p1_10" },
+      au_8: { prev: "p1_13" },
+      au_9: { prev: "p1_14" },
+      au_10: { prev: "p1_15" },
+      au_12: { prev: "es_2" },
+      au_13: { prev: "es_1" },
+      dir_1: { prev: "pb_5" },
+      esc_1: { prev: "pb_6", next: "esc_2" },
+      esc_2: { prev: "esc_1", next: "esc_3" },
+      esc_3: { prev: "esc_2", right: "p1_1", left: "p1_6" },
+      p1_1: { prev: "esc_3", next: "p1_2" },
+      p1_2: { prev: "p1_1", next: "p1_3", right: "au_4" },
+      p1_3: { prev: "p1_2", next: "p1_4", right: "au_3" },
+      p1_4: { prev: "p1_3", next: "p1_5", right: "au_2" },
+      p1_5: { prev: "p1_4", right: "au_1" },
+      p1_6: { prev: "esc_3", center: ["au_5"], right: "p1_7" },
+      p1_7: { prev: "p1_6", next: "p1_8" },
+      p1_8: { prev: "p1_7", next: "p1_9" },
+      p1_9: { prev: "p1_8", next: "p1_10" },
+      p1_10: { prev: "p1_9", center: ["au_6"], right: "p1_11" },
+      au_6: { prev: "p1_10" },
+      p1_11: { prev: "p1_10" , left: "esc_4", center: ["au_7"],right: "p1_13" },
+      p1_13: { prev: "p1_11", center: ["p1_14"], left: "au_8" },
+      p1_14: { prev: "p1_13", center: ["p1_15"], left: "au_9" },
+      p1_15: { prev: "p1_14", left: "au_10" },
+      esc_4: { prev: "p1_11", next: "esc_5" },
+      esc_5: { prev: "esc_4", right: "cf_1" },
+      cf_1: { next: "cf_2" },
+      cf_2: { prev: "cf_1", next: "cf_3" },
+      cf_3: { prev: "cf_2", next: "cf_4" },
+      cf_4: { prev: "pb_6", next: "cf_1", next: "cf_3" } 
+    };
+
+    // Helper: map target ids to friendly labels (same logic as Teoloyucan)
+    const validSceneIds = new Set(Object.keys(scenes));
+    function getHotspotLabel(targetId, fallback) {
+      if (!targetId) return fallback || '';
+      const t = String(targetId).toLowerCase();
+      const auMatch = /^au_(\d+)$/i.exec(t);
+      if (auMatch) return `Aula ${auMatch[1]}`;
+      if (/^(pb|p1)_?/i.test(t)) return 'Pasillo';
+      if (/^esc/i.test(t)) return 'Escaleras';
+      if (/^cf/i.test(t)) return 'Cafetería';
+      if (/^dir/i.test(t)) return 'Dirección';
+      return fallback || targetId;
+    }
+
+    function addHotspotToScene(scene, { pitch = 0, yaw, label, targetId }) {
+      if (!targetId) return;
+      // If center is array, ignore here — hotspots expect single sceneId
+      if (Array.isArray(targetId)) return;
+      if (!validSceneIds.has(targetId)) return;
+      scene.hotSpots.push({ pitch, yaw, type: 'scene', text: getHotspotLabel(targetId, label), sceneId: targetId });
+    }
+
+    Object.keys(scenes).forEach((sceneId) => {
+      const scene = scenes[sceneId];
+      scene.default = false;
+      scene.type = 'equirectangular';
+      scene.hfov = 110;
+      scene.northOffset = 0;
+      scene.hotSpots = [];
+
+      const link = connections[sceneId] || {};
+      if (link.prev) addHotspotToScene(scene, { pitch: 0, yaw: 180, label: 'Regresar', targetId: link.prev });
+      if (link.next) addHotspotToScene(scene, { pitch: 0, yaw: 0, label: 'Continuar', targetId: link.next });
+      if (link.left) addHotspotToScene(scene, { pitch: 0, yaw: -90, label: 'Ir a la izquierda', targetId: link.left });
+      if (link.right) addHotspotToScene(scene, { pitch: 0, yaw: 90, label: 'Ir a la derecha', targetId: link.right });
+      if (link.center) {
+        // center may be array or single
+        if (Array.isArray(link.center)) {
+          link.center.forEach(ct => addHotspotToScene(scene, { pitch: 0, yaw: 0, label: `Ir a ${ct.toUpperCase()}`, targetId: ct }));
+        } else {
+          addHotspotToScene(scene, { pitch: 0, yaw: 0, label: `Ir a ${link.center.toUpperCase()}`, targetId: link.center });
+        }
+      }
+    });
+
+    scenes.pb_1.default = true;
+
+    const viewer = pannellum.viewer('panorama', {
+      default: {
+        firstScene: 'pb_1',
+        author: "Recorrido Virtual",
+        sceneFadeDuration: 1000,
+        autoLoad: true,
+        showControls: true,
+        compass: true,
+        preview: "img360/pb_1.jpeg"
+      },
+      scenes
+    });
+
+    const sceneToggle = document.getElementById('scene-toggle');
+    const scenePicker = document.getElementById('scene-picker');
+    const sceneSelect = document.getElementById('scene-select');
+    const sceneClose = document.getElementById('scene-close');
+
+    Object.entries(scenes).forEach(([sceneId, sceneData]) => {
+      const option = document.createElement('option');
+      option.value = sceneId;
+      option.textContent = `${sceneData.title} (${sceneId})`;
+      sceneSelect.appendChild(option);
+    });
+
+    function toggleScenePicker() {
+      const isOpen = scenePicker.classList.toggle('show');
+      scenePicker.setAttribute('aria-hidden', (!isOpen).toString());
+    }
+
+    sceneToggle.addEventListener('click', toggleScenePicker);
+    sceneClose.addEventListener('click', toggleScenePicker);
+
+    sceneSelect.addEventListener('change', (event) => {
+      const targetScene = event.target.value;
+      if (targetScene) {
+        viewer.loadScene(targetScene);
+        scenePicker.classList.remove('show');
+        scenePicker.setAttribute('aria-hidden', 'true');
+      }
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionamiento Tultepec - Recorrido Virtual CUHE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Estacionamiento - Plantel Tultepec</h1>
+    </header>
+
+    <div class="menu">
+        <a class="button" href="index.html#selection">Salir</a>
+        <a class="button" href="plantel-tultepec.html">Volver a Plantel Tultepec</a>
+        <a class="button" href="estacionamiento-tulte.html">Estacionamiento</a>
+        <a class="button" href="entrada-tulte.html">Entrada</a>
+        <a class="button" href="direccion-control-escolar-tulte.html">Dirección y Control Escolar</a>
+        <a class="button" href="cafeteria-tulte.html">Cafetería</a>
+        <a class="button" href="sanitarios-tulte.html">Sanitarios</a>
+        <a class="button" href="aulas-tulte.html">Aulas</a>
+        <a class="button" href="auditorio-tulte.html">Auditorio</a>
+    </div>
+
+    <main class="section-content">
+        <p>Bienvenido a la sección de Estacionamiento del Plantel Tultepec. Aquí puedes ver imágenes representativas de esta área.</p>
+        <div class="image-carousel">
+            <button class="carousel-button carousel-btn-prev" aria-label="Imagen anterior">❮</button>
+            <div class="carousel-wrapper">
+                <div class="carousel-container">
+                    <div class="carousel-item" data-title="Estacionamiento 1">
+                        <img src="panormas/Estacionamiento.jpeg" alt="Estacionamiento 1" />
+                    </div>
+                    <div class="carousel-item" data-title="Estacionamiento 2">
+                        <img src="panormas/Estacionamiento2.jpeg" alt="Estacionamiento 2" />
+                    </div>
+                    <div class="carousel-item" data-title="Estacionamiento 3">
+                        <img src="panormas/Estacionamiento3.jpeg" alt="Estacionamiento 3" />
+                    </div>
+                </div>
+                <div class="carousel-counter">1 / 3</div>
+                <div class="carousel-title"></div>
+            </div>
+            <button class="carousel-button carousel-btn-next" aria-label="Imagen siguiente">❯</button>
+        </div>
+    </main>
+
+    <div class="gallery-modal" id="galleryModal">
+        <div class="gallery-content">
+            <button class="gallery-nav prev" id="prevBtn">❮</button>
+            <img id="galleryImage" class="gallery-image" style="display: none;">
+            <video id="galleryVideo" class="gallery-video" controls style="display: none;"></video>
+            <button class="gallery-nav next" id="nextBtn">❯</button>
+            <button class="gallery-close" id="closeGallery">✕</button>
+            <div class="gallery-counter" id="galleryCounter"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

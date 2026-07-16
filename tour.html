@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Recorrido Virtual 360</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+  <style>
+    html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; background: #000; color: #fff; }
+    #panorama { width: 100%; height: 100%; }
+    .pnlm-sceneList > div { color: #fff; }
+    .tour-title { position: absolute; left: 16px; top: 16px; z-index: 10; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 6px; }
+    .exit-button { position: absolute; right: 16px; top: 16px; z-index: 12; background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%); color: #fff; border: 1px solid #ff6b6b; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+  <div class="tour-title">Recorrido Virtual 360</div>
+  <button class="exit-button" type="button" onclick="window.location.href='oficinas.html'">Salir</button>
+  <div id="panorama"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <script>
+    const scenes = {
+      "1": { title: "Escena 1", panorama: "360img/1.jpg" },
+      "2": { title: "Escena 2", panorama: "360img/2.jpg" },
+      "3": { title: "Escena 3", panorama: "360img/3.jpg" },
+      "4": { title: "Escena 4", panorama: "360img/4.jpg" },
+      "5": { title: "Escena 5", panorama: "360img/5.jpg" },
+      "6": { title: "Escena 6", panorama: "360img/6.jpg" },
+      "7": { title: "Escena 7", panorama: "360img/7.jpg" },
+      "8": { title: "Escena 8", panorama: "360img/8_conectada_con6_flecha_izquiera.jpg" },
+      "9": { title: "Escena 9", panorama: "360img/9.jpg" },
+      "10": { title: "Escena 10", panorama: "360img/10.jpg" },
+      "11": { title: "Escena 11", panorama: "360img/11_conectada_con10_flecha_izquiera.jpg" },
+      "12": { title: "Escena 12", panorama: "360img/12_conectada_con_11.jpg" },
+      "13": { title: "Escena 13", panorama: "360img/13_conectada_con_10_flecha_enfrente.jpg" },
+      "14": { title: "Escena 14", panorama: "360img/14.jpg" },
+      "15": { title: "Escena 15", panorama: "360img/15.jpg" }
+    };
+
+    // Hotspots especiales extraídos de nombres de archivo
+    // Los hotspots de continuidad se centran (pitch:0, yaw:0)
+    const specialHotspots = {
+      "8": [{ pitch: 0, yaw: 0, type: "scene", text: "Ir a escena 6", sceneId: "6" }],
+      "11": [{ pitch: 0, yaw: 0, type: "scene", text: "Ir a escena 10", sceneId: "10" }],
+      "12": [{ pitch: 0, yaw: 0, type: "scene", text: "Ir a escena 11", sceneId: "11" }],
+      "13": [{ pitch: 0, yaw: 0, type: "scene", text: "Ir a escena 10", sceneId: "10" }]
+    };
+
+    const sceneKeys = Object.keys(scenes).sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+
+    sceneKeys.forEach((sceneId, index) => {
+      const scene = scenes[sceneId];
+      scene.default = false;
+      scene.type = "equirectangular";
+      scene.hfov = 110;
+      scene.northOffset = 0;
+      scene.hotSpots = specialHotspots[sceneId] ? [...specialHotspots[sceneId]] : [];
+
+      // Agrega navegación secuencial simple entre escenas
+      // Coloca el hotspot de 'Siguiente' en el centro (continuidad)
+      if (index < sceneKeys.length - 1) {
+        scene.hotSpots.push({ pitch: 0, yaw: 0, type: "scene", text: `Siguiente: ${parseInt(sceneKeys[index + 1], 10)}`, sceneId: sceneKeys[index + 1] });
+      }
+      // Coloca el hotspot de 'Anterior' atrás (regreso)
+      if (index > 0) {
+        scene.hotSpots.push({ pitch: 0, yaw: 180, type: "scene", text: `Anterior: ${parseInt(sceneKeys[index - 1], 10)}`, sceneId: sceneKeys[index - 1] });
+      }
+    });
+
+    scenes[sceneKeys[0]].default = true;
+
+    pannellum.viewer('panorama', {
+      default: {
+        firstScene: sceneKeys[0],
+        author: "Recorrido Virtual",
+        sceneFadeDuration: 1000,
+        autoLoad: true,
+        showControls: true,
+        compass: true,
+        preview: "360img/1.jpg"
+      },
+      scenes
+    });
+  </script>
+</body>
+</html>
+

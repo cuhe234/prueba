@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recorrido Virtual - Bienvenido a CUHE</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="landing-screen">
+        <div class="landing-card">
+            <h1>Bienvenidos al recorrido virtual de CUHE</h1>
+            <button id="start-button" type="button" class="button landing-button">Empezar</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fallbackStartButton = document.getElementById('start-button');
+            if (fallbackStartButton) {
+                fallbackStartButton.addEventListener('click', () => {
+                    const landingScreen = document.getElementById('landing-screen');
+                    const selectionScreen = document.getElementById('selection-screen');
+                    if (landingScreen && selectionScreen) {
+                        landingScreen.classList.add('hidden');
+                        selectionScreen.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <div id="selection-screen" class="hidden">
+        <div class="selection-card">
+            <h2>Selecciona un plantel</h2>
+            <div class="selection-grid">
+                <button class="choice-card" data-title="Oficinas">
+                    <img src="panormas/oficinas.jpeg" alt="Oficinas CUHE">
+                    <span>Oficinas</span>
+                </button>
+                <button class="choice-card" data-title="Plantel Tultepec">
+                    <img src="panormas/plantel_tulte.jpeg" alt="Plantel Tultepec">
+                    <span>Plantel Tultepec</span>
+                </button>
+                <button class="choice-card" data-title="Plantel Teoloyucan">
+                    <img src="panormas/plantel_teolo.jpeg" alt="Plantel Teoloyucan">
+                    <span>Plantel Teoloyucan</span>
+                </button>
+            </div>
+            <div class="selection-actions">
+                <button id="back-start" class="button">Volver al inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+        <header>
+            <div class="header-inner">
+                <img src="panormas/cuhe%20logo.png" alt="CUHE logo" class="header-logo">
+                <div class="header-right">
+                    <h1>Recorrido virtual</h1>
+                    <button id="exit-button" class="button nav-button">Salir</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="intro">
+            <p>Haz clic en cualquiera de los apartados para ver las imágenes correspondientes.</p>
+        </div>
+
+    <section class="tour-stage" aria-label="Recorrido virtual">
+        <div class="tour-display">
+            <div class="tour-details">
+                <span class="tour-label">Recorrido virtual</span>
+                <h2 id="tourTitle" class="tour-title">Estacionamiento</h2>
+                <p id="tourDescription" class="tour-desc">Comienza el recorrido en el acceso principal y avanza por las áreas más importantes del plantel.</p>
+                <div class="tour-actions">
+                    <button id="tourPrev" class="button secondary">Anterior</button>
+                    <button id="tourNext" class="button">Siguiente</button>
+                    <button id="tourAutoRotate" class="button secondary" data-active="false">Auto-rotar</button>
+                    <button id="tourSoundToggle" class="button secondary" data-active="false">Ambiente</button>
+                    <button id="tourStartOver" class="button secondary">Reiniciar recorrido</button>
+                    <a id="tourGoto" class="button" href="estacionamiento.html">Visitar Estacionamiento</a>
+                </div>
+                <div class="tour-progress" aria-label="Progreso del recorrido">
+                    <span id="tourProgressLabel" class="tour-progress-label">1 / 7</span>
+                    <div class="tour-progress-bar">
+                        <div id="tourProgressFill" class="tour-progress-fill"></div>
+                    </div>
+                </div>
+                <div id="tourStatus" class="tour-status">Usa ← y → o los botones para navegar.</div>
+            </div>
+            <div class="tour-visual">
+                <div id="panoramas" class="tour-pano"></div>
+                <img id="tourFallbackImage" class="tour-fallback hidden" src="" alt="Vista del área del recorrido">
+                <div id="tourHint" class="tour-hint">Foto normal: mueve el cursor para ver movimiento</div>
+                <div class="tour-focus" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <div class="tour-selector" aria-label="Seleccione un área del recorrido">
+            <button class="button tour-room-btn active" data-room="estacionamiento">Estacionamiento</button>
+            <button class="button tour-room-btn" data-room="entrada">Entrada</button>
+            <button class="button tour-room-btn" data-room="direccion">Dirección</button>
+            <button class="button tour-room-btn" data-room="cafeteria">Cafetería</button>
+            <button class="button tour-room-btn" data-room="sanitarios">Sanitarios</button>
+            <button class="button tour-room-btn" data-room="aulas">Aulas</button>
+            <button class="button tour-room-btn" data-room="auditorio">Auditorio</button>
+        </div>
+    </section>
+
+    <aside id="tourInfoPanel" class="info-panel reveal" aria-live="polite">
+        <h3>Panel de guía rápida</h3>
+        <p id="infoPanelText">Navega con las teclas ← / →, usa auto-rotar para panoramas y activa el ambiente para sentir el recorrido.</p>
+        <div class="info-list">
+            <div class="info-item"><strong>Consejo:</strong> Presiona las tarjetas para cambiar de lugar.</div>
+            <div class="info-item"><strong>Tips:</strong> Las fotos normales responden al movimiento del cursor.</div>
+            <div class="info-item"><strong>Atención:</strong> En panoramas puedes girar libremente dentro del visor.</div>
+        </div>
+    </aside>
+
+    <div class="menu">
+        <a class="button" href="estacionamiento.html">Estacionamiento</a>
+        <a class="button" href="entrada.html">Entrada</a>
+        <a class="button" href="direccion-control-escolar.html">Dirección y Control Escolar</a>
+        <a class="button" href="cafeteria.html">Cafetería</a>
+        <a class="button" href="sanitarios.html">Sanitarios</a>
+        <a class="button" href="aulas.html">Aulas</a>
+        <a class="button" href="auditorio.html">Auditorio</a>
+    </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantel Tultepec - Recorrido Virtual CUHE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <img src="panormas/cuhe%20logo.png" alt="CUHE logo" class="header-logo">
+            <div class="header-right">
+                <h1>Plantel Tultepec</h1>
+                <button id="section-exit-button" class="button nav-button" type="button" onclick="window.location.href='index.html#selection'">Salir</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="intro">
+        <p>Recorrido virtual de Plantel Tultepec</p>
+    </div>
+
+    <main class="section-content">
+        <div class="plantel-welcome-screen">
+            <div class="plantel-welcome-card">
+                <h2>Bienvenido al plantel Tultepec</h2>
+                <p>Selecciona un apartado</p>
+                <div class="plantel-welcome-buttons">
+                    <button type="button" class="button plantel-area-btn" data-area="estacionamiento" data-pano="panormas/Estacionamiento.jpeg" data-link="estacionamiento-tulte.html" onclick="window.location.href='estacionamiento-tulte.html'">Estacionamiento</button>
+                    <button type="button" class="button plantel-area-btn" data-area="entrada" data-pano="panormas/Pasillo1.jpeg" data-link="entrada-tulte.html" onclick="window.location.href='entrada-tulte.html'">Entrada</button>
+                    <button type="button" class="button plantel-area-btn" data-area="direccion" data-pano="panormas/oficina2.jpeg" data-link="direccion-control-escolar-tulte.html" onclick="window.location.href='direccion-control-escolar-tulte.html'">Dirección y Control Escolar</button>
+                    <button type="button" class="button plantel-area-btn" data-area="cafeteria" data-pano="panormas/oficina5.jpeg" data-link="cafeteria-tulte.html" onclick="window.location.href='cafeteria-tulte.html'">Cafetería</button>
+                    <button type="button" class="button plantel-area-btn" data-area="sanitarios" data-pano="panormas/sanitarios.jpg" data-link="sanitarios-tulte.html" onclick="window.location.href='sanitarios-tulte.html'">Sanitarios</button>
+                    <button type="button" class="button plantel-area-btn" data-area="aulas" data-pano="panormas/aula360_1.jpg" data-link="aulas-tulte.html" onclick="window.location.href='aulas-tulte.html'">Aulas</button>
+                    <button type="button" class="button plantel-area-btn" data-area="auditorio" data-pano="panormas/auditorio.jpg" data-link="auditorio-tulte.html" onclick="window.location.href='auditorio-tulte.html'">Auditorio</button>
+                    <a class="button" href="recorrido360-tultepec.html" style="font-size: 18px; padding: 20px 40px; width: 100%; text-align: center; background: linear-gradient(135deg, #FF6B35, #FF8555);">🌐 Iniciar Recorrido Inmersivo 360°</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Galería Modal -->
+    <div class="gallery-modal" id="galleryModal">
+        <div class="gallery-content">
+            <button class="gallery-nav prev" id="prevBtn">❮</button>
+            <img id="galleryImage" class="gallery-image" style="display: none;">
+            <video id="galleryVideo" class="gallery-video" controls style="display: none;"></video>
+            <button class="gallery-nav next" id="nextBtn">❯</button>
+            <button class="gallery-close" id="closeGallery">✕</button>
+            <div class="gallery-counter" id="galleryCounter"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const exitButton = document.getElementById('section-exit-button');
+            if (exitButton) {
+                exitButton.addEventListener('click', () => {
+                    window.location.href = 'index.html#selection';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Recorrido Virtual - IMG</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+  <style>
+    html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; background: #000; color: #fff; }
+    #panorama { width: 100%; height: 100%; }
+    .pnlm-sceneList > div { color: #fff; }
+    .tour-title { position: absolute; left: 16px; top: 16px; z-index: 10; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 6px; }
+    .scene-toggle { position: absolute; right: 16px; top: 16px; z-index: 12; background: linear-gradient(180deg, #3d6db9 0%, #01dfff 100%); color: #fafbf6; border: 1px solid #00fff1; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .scene-picker { position: absolute; right: 16px; top: 56px; z-index: 12; background: linear-gradient(180deg, #3d6db9 0%, #01dfff 50%, #00fff1 100%); padding: 16px; border-radius: 18px; display: none; width: 260px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.18); }
+    .scene-picker label { display: block; margin-bottom: 10px; font-size: 0.95rem; color: #fafbf6; letter-spacing: 0.02em; }
+    .scene-picker select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.35); background: rgba(250,251,246,0.12); color: #fff; backdrop-filter: blur(8px); }
+    .scene-picker option { background: rgba(13,30,55,0.95); color: #fafbf6; }
+    .scene-picker button { margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; border: none; background: #fafbf6; color: #0b1830; font-weight: 700; cursor: pointer; }
+    .scene-picker.show { display: block; }
+    .exit-button { position: absolute; right: 16px; top: 56px; z-index: 12; background: linear-gradient(180deg, #d9534f 0%, #c9302c 100%); color: #fff; border: 1px solid #ff6b6b; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+    .pnlm-hotspot {
+      background: linear-gradient(135deg, #3d6db9 0%, #01dfff 50%, #00fff1 100%) !important;
+      border: 2px solid #ffffff !important;
+      border-radius: 50% !important;
+      box-shadow: 0 0 8px rgba(0,0,0,0.25) !important;
+    }
+    .pnlm-hotspot:hover {
+      background: linear-gradient(135deg, #01dfff 0%, #3d6db9 50%, #00fff1 100%) !important;
+      border-color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="tour-title">Recorrido Virtual - Carpeta IMG</div>
+  <button id="scene-toggle" class="scene-toggle">Escenas</button>
+  <button class="exit-button" type="button" onclick="window.location.href='plantel-teoloyucan.html'">Salir</button>
+  <div id="scene-picker" class="scene-picker" aria-hidden="true">
+    <label for="scene-select">Ir a escena</label>
+    <select id="scene-select"></select>
+    <button id="scene-close" type="button">Cerrar selector</button>
+  </div>
+  <div id="panorama"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <script>
+    const imageScenes = [
+      { id: "ent_1", title: "Entrada 1", panorama: "img/ent_1.jpg" },
+      { id: "ent_2", title: "Entrada 2", panorama: "img/ent_2.jpg" },
+      { id: "ent_3", title: "Entrada 3", panorama: "img/ent_3.jpg" },
+      { id: "ent_4", title: "Entrada 4", panorama: "img/ent_4.jpg" },
+      { id: "ent_5", title: "Entrada 5", panorama: "img/ent_5.jpg" },
+      { id: "ent_6", title: "Entrada 6", panorama: "img/ent_6.jpg" },
+      { id: "ent_7", title: "Entrada 7", panorama: "img/ent_7.jpg" },
+      { id: "pb_1", title: "Planta Baja 1", panorama: "img/pb_1.jpg" },
+      { id: "pb_2", title: "Planta Baja 2", panorama: "img/pb_2.jpg" },
+      { id: "pb_3", title: "Planta Baja 3", panorama: "img/pb_3.jpg" },
+      { id: "pb_4", title: "Planta Baja 4", panorama: "img/pb_4.jpg" },
+      { id: "pb_5", title: "Planta Baja 5", panorama: "img/pb_5.jpg" },
+      { id: "pb_6", title: "Planta Baja 6", panorama: "img/pb_6.jpg" },
+      { id: "pb_7", title: "Planta Baja 7", panorama: "img/pb_7.jpg" },
+      { id: "pb_esc", title: "Planta Baja Escalera", panorama: "img/pb_esc.jpg" },
+      { id: "pb_esc2", title: "Planta Baja Escalera 2", panorama: "img/pb_esc2.jpg" },
+      { id: "direc3", title: "Dirección 3", panorama: "img/direc3.jpg" },
+      { id: "direc_2", title: "Dirección 2", panorama: "img/direc_2.jpg" },
+      { id: "dire_1", title: "Dirección 1", panorama: "img/dire_1.jpg" },
+      { id: "esc", title: "Escalera", panorama: "img/esc.jpg" },
+      { id: "esc_2", title: "Escalera 2", panorama: "img/esc_2.jpg" },
+      { id: "esc_3", title: "Escalera 3", panorama: "img/esc_3.jpg" },
+      { id: "p1", title: "Pasillo 1", panorama: "img/p1.jpg" },
+      { id: "p1_1", title: "Pasillo 1-1", panorama: "img/p1_1.jpg" },
+      { id: "p1_2", title: "Pasillo 1-2", panorama: "img/p1_2.jpg" },
+      { id: "p1_3", title: "Pasillo 1-3", panorama: "img/p1_3.jpg" },
+      { id: "p1_4", title: "Pasillo 1-4", panorama: "img/p1_4.jpg" },
+      { id: "p1_5", title: "Pasillo 1-5", panorama: "img/p1_5.jpg" },
+      { id: "p1_6", title: "Pasillo 1-6", panorama: "img/p1_6.jpg" },
+      { id: "p1_7", title: "Pasillo 1-7", panorama: "img/p1_7.jpg" },
+      { id: "p1_8", title: "Pasillo 1-8", panorama: "img/p1_8.jpg" },
+      { id: "p1_9", title: "Pasillo 1-9", panorama: "img/p1_9.jpg" },
+      { id: "p1_10", title: "Pasillo 1-10", panorama: "img/p1_10.jpg" },
+      { id: "p1_11", title: "Pasillo 1-11", panorama: "img/p1_11.jpg" },
+      { id: "p1_12", title: "Pasillo 1-12", panorama: "img/p1_12.jpg" },
+      { id: "p1_13", title: "Pasillo 1-13", panorama: "img/p1_13.jpg" },
+      { id: "p1_14", title: "Pasillo 1-14", panorama: "img/p1_14.jpg" },
+      { id: "p1_15", title: "Pasillo 1-15", panorama: "img/p1_15.jpg" },
+      { id: "au_1", title: "Aula 1", panorama: "img/au_1.jpg" },
+      { id: "au_2", title: "Aula 2", panorama: "img/au_2.jpg" },
+      { id: "au_3", title: "Aula 3", panorama: "img/au_3.jpg" },
+      { id: "au_4", title: "Aula 4", panorama: "img/au_4.jpg" },
+      { id: "au_5", title: "Aula 5", panorama: "img/au_5.jpg" },
+      { id: "au_6", title: "Aula 6", panorama: "img/au_6.jpg" },
+      { id: "au_7", title: "Aula 7", panorama: "img/au_7.jpg" },
+      { id: "au_8", title: "Aula 8", panorama: "img/au_8.jpg" },
+      { id: "au_9", title: "Aula 9", panorama: "img/au_9.jpg" },
+      { id: "au_10", title: "Aula 10", panorama: "img/au_10.jpg" },
+      { id: "au_11", title: "Aula 11", panorama: "img/au_11.jpg" },
+      { id: "au_12", title: "Aula 12", panorama: "img/au_12.jpg" },
+      { id: "au_13", title: "Aula 13", panorama: "img/au_13.jpg" },
+      { id: "au_14", title: "Aula 14", panorama: "img/au_14.jpg" }
+    ];
+
+    const scenes = {};
+    imageScenes.forEach((scene) => {
+      scenes[scene.id] = {
+        title: scene.title,
+        panorama: scene.panorama,
+        type: "equirectangular",
+        hfov: 110,
+        northOffset: 0,
+        default: false,
+        hotSpots: []
+      };
+    });
+
+    const validSceneIds = new Set(imageScenes.map((scene) => scene.id));
+
+    function getHotspotLabel(targetId, fallbackLabel) {
+      const normalizedTarget = targetId.toLowerCase();
+
+      if (normalizedTarget.startsWith("pb") || normalizedTarget.startsWith("p1")) {
+        return "Pasillo";
+      }
+
+      if (normalizedTarget.startsWith("au")) {
+        const aulaMatch = normalizedTarget.match(/^au_(\d+)$/);
+        return aulaMatch ? `Aula ${aulaMatch[1]}` : "Aula";
+      }
+
+      if (normalizedTarget.startsWith("esc")) {
+        return "Escaleras";
+      }
+
+      if (normalizedTarget.startsWith("dire")) {
+        return "Dirección";
+      }
+
+      return fallbackLabel;
+    }
+
+    function addHotspot(currentScene, { pitch = 0, yaw, label, targetId }) {
+      if (!targetId || !validSceneIds.has(targetId)) {
+        return;
+      }
+
+      currentScene.hotSpots.push({
+        pitch,
+        yaw,
+        type: "scene",
+        text: getHotspotLabel(targetId, label),
+        sceneId: targetId
+      });
+    }
+
+    const sceneConnections = {
+      ent_1: { next: "ent_2" },
+      ent_2: { prev: "ent_1", next: "ent_3" },
+      ent_3: { prev: "ent_2", next: "ent_4" },
+      ent_4: { prev: "ent_3", next: "ent_5" },
+      ent_5: { prev: "ent_4", next: "ent_6" },
+      ent_6: { prev: "ent_5", next: "ent_7" },
+      ent_7: { prev: "ent_6", next: "pb_1" },
+      pb_1: { next: "dire_1", left: "pb_2" },
+      pb_2: { prev: "pb_1", right: "pb_3", next: "au_1" },
+      au_1: { prev: "pb_2"},
+      pb_3: { prev: "pb_2", next: "pb_4" },
+      pb_4: { prev: "pb_3", next: "pb_5", right: "au_2" },
+      au_2: { prev: "pb_4"},
+      pb_5: { prev: "pb_4", next: "pb_esc2", right: "au_3" },
+      au_3: { prev: "pb_5"},
+      pb_esc2: { prev: "pb_5", next: "esc", left: "pb_6" },
+      esc: { prev: "pb_esc2", next: "esc_2" },
+      esc_2: { prev: "esc", next: "esc_3" },
+      pb_6: { prev: "pb_esc2", next: "pb_7" },
+      pb_7: { prev: "pb_6", next: "au_6", right: "au_5" },
+      esc: { prev: "pb_esc2", next: "esc_2" },
+      esc_2: { prev: "esc", next: "esc_3" },
+      esc_3: { prev: "esc_2",left: "p1_8", right: "p1" },
+      p1: { prev: "esc_3", left: "p1_1", next: "au_9" },
+      au_9: { prev: "p1"},
+      p1_1: { prev: "p1", next: "p1_2" },
+      p1_2: { prev: "p1_1", next: "p1_3" },
+      p1_3: { prev: "p1_2", next: "p1_4" },
+      p1_4: { prev: "p1_3", next: "au_8", left: "au_7" },
+      au_7: { prev: "p1_4"},
+      au_8: { prev: "p1_4"},
+      p1_5: { prev: "p1_4", next: "p1_6" },
+      p1_6: { prev: "p1_5", next: "p1_7" },
+      p1_7: { prev: "p1_6"},
+      p1_8: { prev: "esc_3", next: "p1_9" },
+      p1_9: { prev: "p1_8", next: "au_10", right: "p1_10" },
+      au_10: { prev: "p1_9"},
+      p1_10: { prev: "p1_9", next: "au_11", right: "p1_11" },
+      au_11: { prev: "p1_10"},
+      p1_11: { prev: "p1_10", next: "au_13", left: "au_12" },
+      au_12: { prev: "p1_11"},
+      au_13: { prev: "p1_11"},
+      p1_12: { prev: "p1_11", next: "p1_13" },
+      p1_13: { prev: "p1_12", next: "p1_14" },
+      p1_14: { prev: "p1_13", next: "p1_15" },
+      p1_15: { prev: "p1_14" },
+      dire_1: { prev: "pb_1", next: "direc3", left: "direc_2" },
+      direc_2: { prev: "dire_1",},
+      direc3: { prev: "dire_1" },
+    };
+
+    imageScenes.forEach((scene) => {
+      const currentScene = scenes[scene.id];
+      const connection = sceneConnections[scene.id];
+
+      if (connection && connection.prev) {
+        addHotspot(currentScene, { pitch: 0, yaw: 180, label: "Regresar", targetId: connection.prev });
+      }
+
+      if (connection && connection.next) {
+        addHotspot(currentScene, { pitch: 0, yaw: 0, label: "Continuar", targetId: connection.next });
+      }
+
+      if (connection && connection.left) {
+        addHotspot(currentScene, { pitch: 0, yaw: -90, label: "Ir a la izquierda", targetId: connection.left });
+      }
+
+      if (connection && connection.right) {
+        addHotspot(currentScene, { pitch: 0, yaw: 90, label: "Ir a la derecha", targetId: connection.right });
+      }
+
+      if (connection && connection.center) {
+        addHotspot(currentScene, { pitch: 0, yaw: 0, label: "Ir a escalera", targetId: connection.center });
+      }
+    });
+
+    scenes[imageScenes[0].id].default = true;
+
+    const viewer = pannellum.viewer('panorama', {
+      default: {
+        firstScene: imageScenes[0].id,
+        author: "Recorrido Virtual",
+        sceneFadeDuration: 1000,
+        autoLoad: true,
+        showControls: true,
+        compass: true,
+        preview: imageScenes[0].panorama
+      },
+      scenes
+    });
+
+    const sceneToggle = document.getElementById('scene-toggle');
+    const scenePicker = document.getElementById('scene-picker');
+    const sceneSelect = document.getElementById('scene-select');
+    const sceneClose = document.getElementById('scene-close');
+
+    imageScenes.forEach((scene) => {
+      const option = document.createElement('option');
+      option.value = scene.id;
+      option.textContent = `${scene.title} (${scene.id})`;
+      sceneSelect.appendChild(option);
+    });
+
+    function toggleScenePicker() {
+      const isOpen = scenePicker.classList.toggle('show');
+      scenePicker.setAttribute('aria-hidden', (!isOpen).toString());
+    }
+
+    sceneToggle.addEventListener('click', toggleScenePicker);
+    sceneClose.addEventListener('click', toggleScenePicker);
+
+    sceneSelect.addEventListener('change', (event) => {
+      const targetScene = event.target.value;
+      if (targetScene) {
+        viewer.loadScene(targetScene);
+        scenePicker.classList.remove('show');
+        scenePicker.setAttribute('aria-hidden', 'true');
+      }
+    });
+  </script>
+</body>
+</html>
+
